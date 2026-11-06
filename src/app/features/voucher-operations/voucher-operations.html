@@ -1,0 +1,371 @@
+﻿<div class="voucher-page">
+
+  <header class="page-head">
+    <div>
+      <p class="eyebrow">WAYHUNTER / ADMIN OPERATIONS</p>
+      <h1>Merchants & <span>Vouchers</span></h1>
+      <p>Purchase inventory, review requests and deliver rewards.</p>
+    </div>
+    <strong class="demo">FRONTEND DEMO</strong>
+  </header>
+
+  <div class="stats">
+    <div>
+      <small>Total Purchased Vouchers</small>
+      <h2>{{vouchers.length}}</h2>
+    </div>
+    <div>
+      <small>Available Stock</small>
+      <h2>{{available.length}}</h2>
+    </div>
+    <div>
+      <small>Pending Requests</small>
+      <h2>{{pending.length}}</h2>
+    </div>
+    <div>
+      <small>Delivered Vouchers</small>
+      <h2>{{fulfilled.length}}</h2>
+    </div>
+    <div>
+      <small>Demo Purchase Cost</small>
+      <h2>Rs. {{totalCost | number}}</h2>
+    </div>
+  </div>
+
+  <section class="panel workflow">
+    <h3>Voucher Management Workflow</h3>
+    <div class="steps">
+      <span>1. Purchase voucher externally</span>
+      <span>2. Register stock</span>
+      <span>3. User requests using RC</span>
+      <span>4. Admin approves</span>
+      <span>5. Allocate to wallet</span>
+    </div>
+  </section>
+
+  <nav class="tabs">
+    <button [class.active]="tab==='inventory'"
+      (click)="tab='inventory'">Voucher Inventory</button>
+
+    <button [class.active]="tab==='requests'"
+      (click)="tab='requests'">User Requests</button>
+
+    <button [class.active]="tab==='approval'"
+      (click)="tab='approval'">Approval Center</button>
+
+    <button [class.active]="tab==='history'"
+      (click)="tab='history'">Allocation History</button>
+
+    <button [class.active]="tab==='partners'"
+      (click)="tab='partners'">Partners</button>
+  </nav>
+
+  @if (message) {
+    <div class="message" role="status">
+      {{message}}
+      <button (click)="message=''"></button>
+    </div>
+  }
+
+  @if (tab === 'inventory') {
+    <section class="panel">
+      <h3>Register Purchased Voucher</h3>
+      <p>
+        Enter a demo voucher purchased from an external supplier.
+        Do not enter genuine redeemable codes in this prototype.
+      </p>
+
+      <div class="form-grid">
+        <label>
+          Supplier / Merchant
+          <input [(ngModel)]="newVoucher.supplier"
+            placeholder="Example voucher supplier" />
+        </label>
+
+        <label>
+          Voucher Offer
+          <input [(ngModel)]="newVoucher.title"
+            placeholder="Example shopping voucher" />
+        </label>
+
+        <label>
+          Demo Voucher Code
+          <input [(ngModel)]="newVoucher.code"
+            placeholder="DEMO-ONLY-001" />
+        </label>
+
+        <label>
+          Voucher Face Value (LKR)
+          <input type="number" min="1"
+            [(ngModel)]="newVoucher.faceValue" />
+        </label>
+
+        <label>
+          Purchase Cost (LKR)
+          <input type="number" min="0"
+            [(ngModel)]="newVoucher.purchaseCost" />
+        </label>
+
+        <label>
+          Redemption Price (RC)
+          <input type="number" min="100"
+            [(ngModel)]="newVoucher.rcPrice" />
+        </label>
+
+        <label>
+          Expiry Date
+          <input type="date"
+            [(ngModel)]="newVoucher.expiry" />
+        </label>
+      </div>
+
+      <button class="primary" (click)="addVoucher()">
+        + Register Voucher Stock
+      </button>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <h3>Voucher Inventory</h3>
+        <input placeholder="Search inventory..."
+          [(ngModel)]="search" />
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Offer</th><th>Supplier</th>
+              <th>Face Value</th><th>Purchase Cost</th>
+              <th>RC Price</th><th>Expiry</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of filteredVouchers; track v.id) {
+              <tr>
+                <td>{{v.id.slice(0,12)}}</td>
+                <td>{{v.title}}</td>
+                <td>{{v.supplier}}</td>
+                <td>Rs. {{v.faceValue}}</td>
+                <td>Rs. {{v.purchaseCost}}</td>
+                <td>{{v.rcPrice}} RC</td>
+                <td>{{v.expiry}}</td>
+                <td>{{v.status}}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8">
+                  No stock registered yet.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (tab === 'requests') {
+    <section class="panel">
+      <h3>Simulate User Redemption Request</h3>
+      <p>
+        In production, requests originate in the Flutter Wallet.
+        This form is for frontend testing only.
+      </p>
+
+      <div class="form-grid">
+        <label>
+          Demo User
+          <select [(ngModel)]="requestUser">
+            <option value="">Select user</option>
+            @for (u of users; track u.email) {
+              <option [value]="u.email">
+                {{u.email}}  {{spendable(u.email)}} RC available
+              </option>
+            }
+          </select>
+        </label>
+
+        <label>
+          Available Voucher Offer
+          <select [(ngModel)]="requestOffer">
+            <option value="">Select offer</option>
+            @for (offer of offers; track offer) {
+              <option [value]="offer">{{offer}}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <button class="primary" (click)="createRequest()">
+        Submit Demo Request
+      </button>
+    </section>
+
+    <section class="panel">
+      <h3>Redemption Requests</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Request</th><th>User</th><th>Offer</th>
+              <th>RC</th><th>Date</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of requests; track r.id) {
+              <tr>
+                <td>{{r.id.slice(0,12)}}</td>
+                <td>{{r.user}}</td>
+                <td>{{r.offer}}</td>
+                <td>{{r.rcPrice}}</td>
+                <td>{{r.date}}</td>
+                <td>{{r.status}}</td>
+              </tr>
+            } @empty {
+              <tr><td colspan="6">No requests yet.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (tab === 'approval') {
+    <section class="panel">
+      <h3>Pending & Approved Requests</h3>
+
+      @for (r of requests; track r.id) {
+        @if (r.status === 'Pending' || r.status === 'Approved') {
+          <div class="request-card">
+            <div>
+              <strong>{{r.offer}}</strong>
+              <p>{{r.user}}</p>
+              <small>
+                {{r.rcPrice}} RC  {{r.status}}
+                 Reserved: {{reserved(r.user)}} RC
+              </small>
+            </div>
+
+            <div class="card-actions">
+              @if (r.status === 'Pending') {
+                <button class="primary"
+                  (click)="approve(r)">Approve</button>
+              }
+
+              @if (r.status === 'Approved') {
+                <button class="primary"
+                  (click)="allocate(r)">
+                  Allocate to Wallet
+                </button>
+              }
+
+              <button class="danger"
+                (click)="reject(r)">Reject</button>
+            </div>
+          </div>
+        }
+      }
+
+      @if (!pending.length && !approved.length) {
+        <p>No pending approval or allocation requests.</p>
+      }
+    </section>
+
+    <section class="panel">
+      <h3>Demo Wallet RC Overview</h3>
+      @for (u of users; track u.email) {
+        <div class="balance-row">
+          <span>{{u.email}}</span>
+          <span>
+            Balance: {{u.rc}} RC
+             Reserved: {{reserved(u.email)}} RC
+             Spendable: {{spendable(u.email)}} RC
+          </span>
+        </div>
+      }
+    </section>
+  }
+
+  @if (tab === 'history') {
+    <section class="panel">
+      <h3>Delivered Vouchers / Demo Wallet</h3>
+
+      @for (v of myWallet; track v.id) {
+        <div class="request-card">
+          <div>
+            <strong>{{v.title}}</strong>
+            <p>{{v.assignedUser}}</p>
+            <small>
+              Code: {{v.code}}  Expires {{v.expiry}}
+               {{v.status}}
+            </small>
+          </div>
+
+          @if (v.status === 'Allocated') {
+            <button (click)="markUsed(v)">
+              Mark Used (Demo)
+            </button>
+          }
+        </div>
+      } @empty {
+        <p>No vouchers delivered yet.</p>
+      }
+    </section>
+
+    <section class="panel">
+      <h3>Voucher Audit History</h3>
+
+      @for (a of audit; track $index) {
+        <div class="balance-row">
+          <span>{{a.action}}  {{a.detail}}</span>
+          <small>{{a.date}}</small>
+        </div>
+      } @empty {
+        <p>No events recorded.</p>
+      }
+    </section>
+  }
+
+  @if (tab === 'partners') {
+    <section class="panel">
+      <h3>Registered Voucher Suppliers</h3>
+
+      @for (p of partners; track p) {
+        <div class="request-card">
+          <strong>{{p}}</strong>
+          <span>
+            
+            Registered through inventory
+          </span>
+        </div>
+      } @empty {
+        <p>No suppliers yet. Register a voucher first.</p>
+      }
+
+      <p>
+        Production partner agreements, contracts,
+        commissions and settlements require backend records.
+      </p>
+    </section>
+  }
+
+  <section class="panel">
+    <h3>BRD Financial Rules</h3>
+    <div class="rules">
+      <span>100 HP = 10 RC</span>
+      <span>100 RC = LKR 10 internal reference</span>
+      <span>Minimum redemption eligibility: 100 RC</span>
+      <span>Voucher price follows partner-specific offer</span>
+      <span>Rejected requests release reserved RC</span>
+      <span>One voucher code allocated once only</span>
+    </div>
+  </section>
+
+  <div class="footer">
+    <small>Demo only  not connected to real wallets or suppliers.</small>
+    <button (click)="reset()">Reset Voucher Demo</button>
+  </div>
+
+</div>
+

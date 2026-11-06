@@ -1,0 +1,40 @@
+﻿import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-auth-layout',
+  standalone: true,
+  imports: [RouterOutlet],
+  template: `
+    <main class="wh-adventure-auth">
+
+      <div class="wh-adventure-bg" aria-hidden="true"></div>
+      <div class="wh-adventure-shade" aria-hidden="true"></div>
+      <div class="wh-adventure-glow" aria-hidden="true"></div>
+      <div class="wh-adventure-mist" aria-hidden="true"></div>
+
+      <div class="wh-sparkles" aria-hidden="true">
+        <span></span><span></span><span></span>
+        <span></span><span></span><span></span>
+      </div>
+
+      <section class="wh-adventure-center">
+
+        <div class="wh-logo-frame">
+          <img
+            class="wh-adventure-logo"
+            src="/images/logo/wayhunter-logo.jpg"
+            alt="Original WayHunter Logo"
+          />
+        </div>
+
+        <div class="wh-adventure-form">
+          <router-outlet></router-outlet>
+        </div>
+
+      </section>
+
+    </main>
+  `
+})
+export class AuthLayout {}

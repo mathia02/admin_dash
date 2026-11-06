@@ -42,3 +42,17 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+node_modules/
+dist/
+.angular/
+.env
+.env.*
+!.env.example
+*.log
+wayhunter-code-backup-*/
+wayhunter-feature-backup-*/
+wayhunter-backup-*/
+voucher-backup-*/
+*.bak
+*.backup*

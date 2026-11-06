@@ -1,0 +1,187 @@
+﻿import { Component, computed, signal, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import {
+  AdminDemoDataService,
+  AdminRow,
+  SECTIONS
+} from './admin-demo-data.service';
+
+@Component({
+  selector: 'app-admin-management',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './admin-management.html',
+  styleUrl: './admin-management.scss'
+})
+export class AdminManagementComponent {
+  readonly data = inject(AdminDemoDataService);
+  private readonly route = inject(ActivatedRoute);
+
+  module = signal('users');
+  search = signal('');
+  status = signal('All Statuses');
+  selected = signal<AdminRow | null>(null);
+
+  config = computed(() =>
+    SECTIONS[this.module()] || SECTIONS['users']
+  );
+
+  rows = computed(() => this.data.rows(this.module()));
+
+  statuses = computed(() => [
+    'All Statuses',
+    ...new Set(this.rows().map(row => row.status))
+  ]);
+
+  filtered = computed(() => {
+    const q = this.search().trim().toLowerCase();
+    const status = this.status();
+
+    return this.rows().filter(row => {
+      const matchesSearch = !q ||
+        Object.values(row).some(value =>
+          String(value).toLowerCase().includes(q)
+        );
+
+      const matchesStatus =
+        status === 'All Statuses' || row.status === status;
+
+      return matchesSearch && matchesStatus;
+    });
+  });
+
+  attention = computed(() =>
+    this.rows().filter(row =>
+      ['Pending', 'Reported', 'Under Review', 'Review Required']
+        .includes(row.status)
+    ).length
+  );
+
+  constructor() {
+    this.route.paramMap.subscribe(params => {
+      const routeName = params.get('module') || 
+  this.route.snapshot.routeConfig?.path || 'users';
+
+const aliases: Record<string, string> = {
+  'trips-historical-routes': 'trips',
+  'reports-analytics': 'reports'
+};
+
+const key = aliases[routeName] || routeName;
+      this.module.set(SECTIONS[key] ? key : 'users');
+      this.search.set('');
+      this.status.set('All Statuses');
+      this.selected.set(null);
+    });
+  }
+
+  view(row: AdminRow): void {
+    this.selected.set(row);
+  }
+
+  close(): void {
+    this.selected.set(null);
+  }
+
+  perform(row: AdminRow, action: string): void {
+    const confirmMessage =
+      `Demo action only\n\n${action}: ${row.name}\n\nContinue?`;
+
+    if (!window.confirm(confirmMessage)) return;
+
+    const mapping: Record<string, string> = {
+      Warn: 'Warned',
+      Suspend: 'Suspended',
+      Reactivate: 'Active',
+      Approve: 'Approved',
+      Reject: 'Rejected',
+      Activate: 'Active',
+      Pause: 'Paused',
+      Complete: 'Completed',
+      Publish: 'Published',
+      Hide: 'Hidden',
+      'Mark Sent': 'Sent',
+      Cancel: 'Cancelled'
+    };
+
+    const status = mapping[action] || action;
+
+    this.data.update(this.module(), row.id, status);
+
+    const updated = this.data.rows(this.module())
+      .find(x => x.id === row.id);
+
+    this.selected.set(updated || null);
+  }
+
+  add(): void {
+    const name = window.prompt('Enter new demo record name:');
+    if (!name?.trim()) return;
+
+    const owner = window.prompt('Enter owner or email:', 'Demo Admin');
+    if (owner === null) return;
+
+    const type = window.prompt('Enter category/type:', 'General');
+    if (type === null) return;
+
+    const module = this.module();
+    const id = module.substring(0, 3).toUpperCase()
+      + '-' + Date.now();
+
+    this.data.add(module, {
+      id,
+      name: name.trim(),
+      owner: owner.trim(),
+      type: type.trim(),
+      status: 'Pending',
+      details: 'Locally created demonstration record',
+      date: new Date().toISOString().slice(0, 10)
+    });
+  }
+
+  exportCsv(): void {
+    const headers = [
+      'Record ID', 'Name', 'Owner', 'Type',
+      'Status', 'Details', 'Date'
+    ];
+
+    const escapeCsv = (value: unknown) =>
+      '"' + String(value ?? '')
+        .replace(/^[=+\-@\t\r]/, "'$&")
+        .replace(/"/g, '""') + '"';
+
+    const records = this.filtered().map(row => [
+      row.id, row.name, row.owner, row.type,
+      row.status, row.details, row.date
+    ]);
+
+    const csv = [headers, ...records]
+      .map(row => row.map(escapeCsv).join(','))
+      .join('\r\n');
+
+    const blob = new Blob(['\uFEFF' + csv], {
+      type: 'text/csv;charset=utf-8'
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `wayhunter-${this.module()}-demo.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  resetDemo(): void {
+    if (window.confirm('Reset all local demo data?')) {
+      this.data.reset();
+      this.close();
+    }
+  }
+}
+
+
+

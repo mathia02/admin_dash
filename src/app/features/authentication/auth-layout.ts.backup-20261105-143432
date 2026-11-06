@@ -1,0 +1,76 @@
+﻿import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-auth-layout',
+  standalone: true,
+  imports: [RouterOutlet],
+  template: `
+    <main class="wh-tropical-auth">
+
+      <!-- Animated Nature Background -->
+
+      <div class="wh-bg-photo photo-one"
+           aria-hidden="true"></div>
+
+      <div class="wh-bg-photo photo-two"
+           aria-hidden="true"></div>
+
+      <!-- Blue and Golden Colour Grading -->
+
+      <div class="wh-bg-colorgrade"
+           aria-hidden="true"></div>
+
+      <!-- Animated Sunlight -->
+
+      <div class="wh-bg-sunlight"
+           aria-hidden="true"></div>
+
+      <!-- Moving Nature Mist -->
+
+      <div class="wh-bg-mist mist-one"
+           aria-hidden="true"></div>
+
+      <div class="wh-bg-mist mist-two"
+           aria-hidden="true"></div>
+
+      <!-- Floating Light Particles -->
+
+      <div class="wh-bg-particles"
+           aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <!-- Center Logo + Login -->
+
+      <section class="wh-tropical-center">
+
+        <div class="wh-tropical-logo-wrap">
+
+          <img
+            src="/images/logo/wayhunter-logo.jpg"
+            alt="WayHunter Original Logo"
+            class="wh-tropical-logo"
+          />
+
+        </div>
+
+        <div class="wh-tropical-login">
+
+          <router-outlet></router-outlet>
+
+        </div>
+
+      </section>
+
+    </main>
+  `
+})
+export class AuthLayout {}

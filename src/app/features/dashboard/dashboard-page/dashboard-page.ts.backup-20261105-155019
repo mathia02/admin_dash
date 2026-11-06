@@ -1,0 +1,142 @@
+﻿import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-dashboard-page',
+  standalone: true,
+  imports: [RouterLink],
+  template: `
+    <div class="wh-module">
+
+      <div class="wh-page-heading">
+        <div>
+          <div class="wh-eyebrow">WAYHUNTER / COMMAND CENTER</div>
+          <h1>Dashboard Overview</h1>
+          <p>Monitor the WayHunter platform from one place.</p>
+        </div>
+
+        <span class="wh-demo-tag">FRONTEND DEMO DATA</span>
+      </div>
+
+      <div class="wh-metric-grid wh-dashboard-metrics">
+        @for (card of cards; track card.title) {
+          <div class="wh-metric-card">
+            <span>{{ card.title }}</span>
+            <strong>{{ card.value }}</strong>
+            <small>{{ card.caption }}</small>
+          </div>
+        }
+      </div>
+
+      <div class="wh-dashboard-grid">
+
+        <section class="wh-chart-card">
+          <div class="wh-card-title">
+            <div>
+              <h2>Platform Activity</h2>
+              <p>Illustrative weekly overview</p>
+            </div>
+            <span>Last 7 days</span>
+          </div>
+
+          <div class="wh-chart">
+            @for (bar of activity; track bar.day) {
+              <div class="wh-chart-item">
+                <div class="wh-chart-track">
+                  <div
+                    class="wh-chart-bar"
+                    [style.height.%]="bar.value"
+                  ></div>
+                </div>
+                <span>{{ bar.day }}</span>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section class="wh-chart-card">
+          <div class="wh-card-title">
+            <div>
+              <h2>Pending Actions</h2>
+              <p>Quick access to management</p>
+            </div>
+          </div>
+
+          <div class="wh-pending-list">
+            @for (item of pending; track item.route) {
+              <a [routerLink]="item.route" class="wh-pending-item">
+                <span>{{ item.title }}</span>
+                <strong>{{ item.count }}</strong>
+              </a>
+            }
+          </div>
+        </section>
+
+      </div>
+
+      <section class="wh-chart-card wh-quick-panel">
+        <div class="wh-card-title">
+          <div>
+            <h2>Quick Management</h2>
+            <p>Open any module directly</p>
+          </div>
+        </div>
+
+        <div class="wh-quick-grid">
+          @for (link of quickLinks; track link.route) {
+            <a class="wh-quick-link" [routerLink]="link.route">
+              <span>{{ link.icon }}</span>
+              <strong>{{ link.title }}</strong>
+              <small>Open Module </small>
+            </a>
+          }
+        </div>
+      </section>
+
+      <div class="wh-demo-note">
+        All dashboard figures are illustrative. Actual API data
+        and SQL Server integration are not connected.
+      </div>
+
+    </div>
+  `
+})
+export class DashboardPage {
+
+  cards = [
+    { title: 'Total Users', value: '1,284', caption: 'Sample registered accounts' },
+    { title: 'Published Places', value: '326', caption: 'Sample locations' },
+    { title: 'Active Games', value: '18', caption: 'Sample live challenges' },
+    { title: 'Pending Reviews', value: '06', caption: 'Sample submissions' },
+    { title: 'Active Hazards', value: '03', caption: 'Sample safety alerts' },
+    { title: 'Merchants', value: '12', caption: 'Sample merchant records' }
+  ];
+
+  activity = [
+    { day: 'Mon', value: 38 },
+    { day: 'Tue', value: 58 },
+    { day: 'Wed', value: 46 },
+    { day: 'Thu', value: 75 },
+    { day: 'Fri', value: 62 },
+    { day: 'Sat', value: 94 },
+    { day: 'Sun', value: 72 }
+  ];
+
+  pending = [
+    { title: 'Hunter Verifications', count: '06', route: '/location-verification' },
+    { title: 'Reward Requests', count: '09', route: '/wallet-rewards' },
+    { title: 'Hazard Reports', count: '03', route: '/hazards' },
+    { title: 'Merchant Applications', count: '04', route: '/merchants' }
+  ];
+
+  quickLinks = [
+    { title: 'Users', icon: '', route: '/users' },
+    { title: 'Places', icon: '', route: '/places' },
+    { title: 'Games', icon: '', route: '/games' },
+    { title: 'Hazards', icon: '', route: '/hazards' },
+    { title: 'Rewards', icon: '', route: '/wallet-rewards' },
+    { title: 'Merchants', icon: '', route: '/merchants' },
+    { title: 'Reports', icon: '', route: '/reports-analytics' },
+    { title: 'Settings', icon: '', route: '/settings' }
+  ];
+}

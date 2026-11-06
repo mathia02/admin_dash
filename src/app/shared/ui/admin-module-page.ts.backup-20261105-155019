@@ -1,0 +1,530 @@
+﻿import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import {
+  AdminModuleDefinition,
+  AdminRow
+} from '../../core/mock-data/admin-data';
+import { AdminDemoStore } from '../../core/services/admin-demo-store';
+
+@Component({
+  selector: 'app-admin-module-page',
+  standalone: true,
+  imports: [FormsModule],
+  template: `
+    <div class="wh-module">
+
+      <div class="wh-page-heading">
+        <div>
+          <div class="wh-eyebrow">WAYHUNTER / ADMIN MODULE</div>
+          <h1>{{ definition.title }}</h1>
+          <p>{{ definition.description }}</p>
+        </div>
+
+        <div class="wh-heading-actions">
+          <button class="wh-btn wh-btn-secondary" (click)="exportCsv()">
+            Export CSV
+          </button>
+          <button class="wh-btn wh-btn-primary" (click)="openCreate()">
+            + Add Demo Record
+          </button>
+        </div>
+      </div>
+
+      <div class="wh-metric-grid">
+        <div class="wh-metric-card">
+          <span>Total Records</span>
+          <strong>{{ rows.length }}</strong>
+          <small>Current browser data</small>
+        </div>
+
+        <div class="wh-metric-card">
+          <span>Filtered Results</span>
+          <strong>{{ visibleRows.length }}</strong>
+          <small>Search / status filter</small>
+        </div>
+
+        <div class="wh-metric-card">
+          <span>Require Attention</span>
+          <strong>{{ attentionCount }}</strong>
+          <small>Pending, reported or flagged</small>
+        </div>
+
+        <div class="wh-metric-card">
+          <span>Available Statuses</span>
+          <strong>{{ definition.statuses.length }}</strong>
+          <small>Demo management workflow</small>
+        </div>
+      </div>
+
+      <section class="wh-workflow-panel">
+        <div class="wh-workflow-title">
+          <span class="wh-small-icon">{{ definition.icon }}</span>
+          <strong>Module Workflow</strong>
+        </div>
+
+        <div class="wh-workflow-items">
+          @for (step of definition.workflow; track step; let i = $index) {
+            <div class="wh-workflow-step">
+              <span>{{ i + 1 }}</span>
+              {{ step }}
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="wh-table-panel">
+
+        <div class="wh-table-head">
+          <div>
+            <h2>{{ definition.title }} Records</h2>
+            <p>Manage sample data and view item details.</p>
+          </div>
+
+          <div class="wh-toolbar">
+            <input
+              class="wh-search"
+              type="search"
+              placeholder="Search records..."
+              [(ngModel)]="search"
+            />
+
+            <select [(ngModel)]="statusFilter">
+              <option value="All">All Statuses</option>
+
+              @for (status of definition.statuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <div class="wh-table-scroll">
+          <table class="wh-data-table">
+            <thead>
+              <tr>
+                <th>Record ID</th>
+
+                @for (col of definition.columns; track col.key) {
+                  <th>{{ col.label }}</th>
+                }
+
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (row of visibleRows; track row.id) {
+                <tr>
+                  <td class="wh-record-id">{{ row.id }}</td>
+
+                  @for (col of definition.columns; track col.key) {
+                    <td>{{ row[col.key] }}</td>
+                  }
+
+                  <td>
+                    <span
+                      class="wh-status"
+                      [class.wh-status-good]="isGood(row.status)"
+                      [class.wh-status-bad]="isBad(row.status)"
+                    >
+                      {{ row.status }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <button
+                      class="wh-link-button"
+                      (click)="openDetails(row)"
+                    >
+                      View Details
+                    </button>
+                  </td>
+                </tr>
+              }
+
+              @if (visibleRows.length === 0) {
+                <tr>
+                  <td
+                    [attr.colspan]="definition.columns.length + 3"
+                    class="wh-empty-table"
+                  >
+                    No matching records found.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="wh-table-footer">
+          <span>
+            Showing {{ visibleRows.length }} of {{ rows.length }} records
+          </span>
+
+          <button class="wh-link-button" (click)="resetFilters()">
+            Clear Filters
+          </button>
+        </div>
+      </section>
+
+      <div class="wh-demo-note">
+        DEMO DATA  Changes are saved only inside this browser.
+        No real WayHunter accounts, approvals or payments are affected.
+      </div>
+
+    </div>
+
+    @if (selected) {
+      <div class="wh-modal-overlay" (click)="closeDetails()">
+        <section
+          class="wh-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Record details"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="wh-modal-header">
+            <div>
+              <div class="wh-eyebrow">RECORD DETAILS</div>
+              <h2>{{ selected.id }}</h2>
+            </div>
+            <button class="wh-close" (click)="closeDetails()"></button>
+          </div>
+
+          <div class="wh-detail-grid">
+            @for (col of definition.columns; track col.key) {
+              <div class="wh-detail-item">
+                <span>{{ col.label }}</span>
+                <strong>{{ selected[col.key] }}</strong>
+              </div>
+            }
+
+            <div class="wh-detail-item">
+              <span>Current Status</span>
+              <strong>{{ selected.status }}</strong>
+            </div>
+          </div>
+
+          <div class="wh-modal-field">
+            <label>Update Demo Status</label>
+            <select [(ngModel)]="nextStatus">
+              @for (status of definition.statuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="wh-modal-actions">
+            <button class="wh-btn wh-btn-primary" (click)="applyStatus()">
+              Save Status
+            </button>
+
+            <button class="wh-btn wh-btn-secondary" (click)="openEdit()">
+              Edit Details
+            </button>
+
+            <button class="wh-btn wh-btn-danger" (click)="deleteSelected()">
+              Delete Demo
+            </button>
+          </div>
+        </section>
+      </div>
+    }
+
+    @if (editorOpen) {
+      <div class="wh-modal-overlay" (click)="closeEditor()">
+        <section
+          class="wh-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Edit demo record"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="wh-modal-header">
+            <div>
+              <div class="wh-eyebrow">DEMO RECORD EDITOR</div>
+              <h2>{{ editingId ? 'Edit Record' : 'Create Record' }}</h2>
+            </div>
+            <button class="wh-close" (click)="closeEditor()"></button>
+          </div>
+
+          <div class="wh-editor-grid">
+            @for (col of definition.columns; track col.key) {
+              <div class="wh-modal-field">
+                <label>{{ col.label }}</label>
+                <input
+                  type="text"
+                  [(ngModel)]="formData[col.key]"
+                  [placeholder]="col.label"
+                />
+              </div>
+            }
+
+            <div class="wh-modal-field">
+              <label>Status</label>
+              <select [(ngModel)]="formStatus">
+                @for (status of definition.statuses; track status) {
+                  <option [value]="status">{{ status }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          @if (formError) {
+            <div class="wh-form-error">{{ formError }}</div>
+          }
+
+          <div class="wh-modal-actions">
+            <button class="wh-btn wh-btn-primary" (click)="saveEditor()">
+              Save Record
+            </button>
+
+            <button class="wh-btn wh-btn-secondary" (click)="closeEditor()">
+              Cancel
+            </button>
+          </div>
+        </section>
+      </div>
+    }
+  `
+})
+export class AdminModulePage implements OnChanges {
+
+  @Input({ required: true })
+  definition!: AdminModuleDefinition;
+
+  rows: AdminRow[] = [];
+
+  search = '';
+  statusFilter = 'All';
+
+  selected: AdminRow | null = null;
+  nextStatus = '';
+
+  editorOpen = false;
+  editingId: string | null = null;
+
+  formData: Record<string, string> = {};
+  formStatus = '';
+  formError = '';
+
+  private good = [
+    'Active', 'Approved', 'Published',
+    'Verified', 'Resolved', 'Ready',
+    'Issued', 'Redeemed', 'Completed'
+  ];
+
+  private bad = [
+    'Rejected', 'Suspended', 'Flagged',
+    'Hidden'
+  ];
+
+  constructor(private store: AdminDemoStore) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['definition'] && this.definition) {
+      this.rows = this.store.get(
+        this.definition.key,
+        this.definition.rows
+      );
+
+      this.resetFilters();
+    }
+  }
+
+  get visibleRows(): AdminRow[] {
+    const query = this.search.trim().toLowerCase();
+
+    return this.rows.filter(row => {
+      const statusMatch =
+        this.statusFilter === 'All' ||
+        row.status === this.statusFilter;
+
+      const textMatch =
+        !query ||
+        Object.values(row).some(value =>
+          String(value).toLowerCase().includes(query)
+        );
+
+      return statusMatch && textMatch;
+    });
+  }
+
+  get attentionCount(): number {
+    return this.rows.filter(row =>
+      ['Pending', 'Reported', 'Flagged', 'More Evidence']
+        .includes(row.status)
+    ).length;
+  }
+
+  isGood(status: string): boolean {
+    return this.good.includes(status);
+  }
+
+  isBad(status: string): boolean {
+    return this.bad.includes(status);
+  }
+
+  resetFilters(): void {
+    this.search = '';
+    this.statusFilter = 'All';
+  }
+
+  private persist(action: string): void {
+    this.store.save(this.definition.key, this.rows);
+    this.store.addLog(action);
+  }
+
+  openDetails(row: AdminRow): void {
+    this.selected = { ...row };
+    this.nextStatus = row.status;
+  }
+
+  closeDetails(): void {
+    this.selected = null;
+  }
+
+  applyStatus(): void {
+    if (!this.selected) return;
+
+    const id = this.selected.id;
+
+    this.rows = this.rows.map(row =>
+      row.id === id
+        ? { ...row, status: this.nextStatus }
+        : row
+    );
+
+    this.persist(
+      this.definition.title + ': ' + id + ' -> ' + this.nextStatus
+    );
+
+    this.selected = null;
+  }
+
+  openCreate(): void {
+    this.selected = null;
+    this.editingId = null;
+    this.formError = '';
+    this.formData = {};
+    this.formStatus = this.definition.statuses[0];
+
+    this.definition.columns.forEach(col => {
+      this.formData[col.key] = '';
+    });
+
+    this.editorOpen = true;
+  }
+
+  openEdit(): void {
+    if (!this.selected) return;
+
+    const row = this.selected;
+
+    this.editingId = row.id;
+    this.formData = {};
+
+    this.definition.columns.forEach(col => {
+      this.formData[col.key] = row[col.key] || '';
+    });
+
+    this.formStatus = row.status;
+    this.formError = '';
+    this.selected = null;
+    this.editorOpen = true;
+  }
+
+  closeEditor(): void {
+    this.editorOpen = false;
+    this.editingId = null;
+  }
+
+  saveEditor(): void {
+    const hasData = this.definition.columns.some(col =>
+      (this.formData[col.key] || '').trim().length > 0
+    );
+
+    if (!hasData) {
+      this.formError = 'Enter at least one field.';
+      return;
+    }
+
+    const id = this.editingId ||
+      this.definition.key.toUpperCase().slice(0, 3) +
+      '-' + Date.now().toString().slice(-7);
+
+    const result: AdminRow = {
+      id,
+      status: this.formStatus
+    };
+
+    this.definition.columns.forEach(col => {
+      result[col.key] = (this.formData[col.key] || '').trim();
+    });
+
+    if (this.editingId) {
+      this.rows = this.rows.map(row =>
+        row.id === id ? result : row
+      );
+    } else {
+      this.rows = [result, ...this.rows];
+    }
+
+    this.persist(
+      this.definition.title + ': saved record ' + id
+    );
+
+    this.closeEditor();
+  }
+
+  deleteSelected(): void {
+    if (!this.selected) return;
+
+    const id = this.selected.id;
+
+    if (!window.confirm('Delete this demo record?')) return;
+
+    this.rows = this.rows.filter(row => row.id !== id);
+    this.persist(this.definition.title + ': deleted ' + id);
+    this.selected = null;
+  }
+
+  exportCsv(): void {
+    const keys = ['id', ...this.definition.columns.map(c => c.key), 'status'];
+    const labels = [
+      'Record ID',
+      ...this.definition.columns.map(c => c.label),
+      'Status'
+    ];
+
+    const escapeCell = (value: string): string =>
+      '"' + String(value).replace(/"/g, '""') + '"';
+
+    const lines = [
+      labels.map(escapeCell).join(','),
+      ...this.visibleRows.map(row =>
+        keys.map(key => escapeCell(row[key] || '')).join(',')
+      )
+    ];
+
+    const blob = new Blob(
+      ['\uFEFF' + lines.join('\r\n')],
+      { type: 'text/csv;charset=utf-8;' }
+    );
+
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+
+    anchor.href = url;
+    anchor.download = this.definition.key + '-demo.csv';
+    anchor.click();
+
+    URL.revokeObjectURL(url);
+  }
+}

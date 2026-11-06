@@ -1,0 +1,294 @@
+﻿<div class="wh-page">
+
+  @if (module === 'dashboard') {
+    <div class="wh-header">
+      <div>
+        <div class="wh-eyebrow">WAYHUNTER / COMMAND CENTER</div>
+        <h1>Dashboard <em>Overview</em></h1>
+        <p>Monitor the WayHunter platform from one place.</p>
+      </div>
+      <span class="wh-demo">FRONTEND DEMO DATA</span>
+    </div>
+
+    <div class="wh-stats">
+      @for (card of overview; track card.title) {
+        <a class="wh-stat" [class]="card.color"
+           [routerLink]="card.route">
+          <small>{{card.title}}</small>
+          <strong>{{card.value}}</strong>
+          <span>Sample records</span>
+        </a>
+      }
+    </div>
+
+    <div class="wh-two">
+      <section class="wh-panel">
+        <h2>Platform Activity</h2>
+        <p>Illustrative activity, not live analytics</p>
+        <div class="wh-chart">
+          @for (bar of activity; track bar.day) {
+            <div class="wh-column">
+              <div class="wh-bar"
+                [style.height.%]="bar.height"></div>
+              <small>{{bar.day}}</small>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="wh-panel">
+        <h2>Pending Actions</h2>
+        <p>Quick management shortcuts</p>
+        <a routerLink="/location-verification">Hunter Verification</a>
+        <a routerLink="/wallet-rewards">Reward Requests</a>
+        <a routerLink="/hazards">Hazard Reports</a>
+        <a routerLink="/games">Game Publication</a>
+        <a routerLink="/merchants">Voucher Inventory</a>
+      </section>
+    </div>
+
+    <section class="wh-panel">
+      <h2>Business & Operational Overview</h2>
+      <div class="wh-workflow">
+        <span>Users & Growth</span>
+        <span>Published Places</span>
+        <span>Games</span>
+        <span>HP / RC Audit</span>
+        <span>Voucher Fulfillment</span>
+        <span>Campaign Analytics</span>
+        <span>Partner Settlements</span>
+      </div>
+      <p>Actual revenue, RC balances and settlements require
+        authoritative API and SQL records.</p>
+    </section>
+  } @else {
+    <div class="wh-header">
+      <div>
+        <div class="wh-eyebrow">WAYHUNTER / ADMIN MODULE</div>
+        <h1>{{config.title}}</h1>
+        <p>{{config.description}}</p>
+      </div>
+      <div class="wh-actions">
+        <span class="wh-demo">DEMO DATA</span>
+        <button (click)="exportCsv()">Export CSV</button>
+        <button class="wh-primary" (click)="openAdd()">
+          + Add Demo Record
+        </button>
+      </div>
+    </div>
+
+    <div class="wh-stats four">
+      <div class="wh-stat">
+        <small>Total Records</small>
+        <strong>{{rows.length}}</strong>
+        <span>Current browser data</span>
+      </div>
+      <div class="wh-stat">
+        <small>Filtered Results</small>
+        <strong>{{filtered.length}}</strong>
+        <span>Search and filter</span>
+      </div>
+      <div class="wh-stat">
+        <small>Require Attention</small>
+        <strong>{{attention}}</strong>
+        <span>Pending or reported</span>
+      </div>
+      <div class="wh-stat">
+        <small>Statuses</small>
+        <strong>{{statuses.length - 1}}</strong>
+        <span>Demo workflow</span>
+      </div>
+    </div>
+
+    <section class="wh-panel">
+      <h2>Module Workflow</h2>
+      <div class="wh-workflow">
+        @for (step of config.workflow; track step; let i=$index) {
+          <span><b>{{i + 1}}</b> {{step}}</span>
+        }
+      </div>
+    </section>
+
+    <section class="wh-panel">
+      <div class="wh-table-header">
+        <div>
+          <h2>{{config.title}} Records</h2>
+          <p>Search, filter and manage demo records</p>
+        </div>
+        <div class="wh-actions">
+          <input
+            type="search"
+            placeholder="Search records..."
+            [(ngModel)]="search"
+          />
+          <select [(ngModel)]="filter">
+            @for (s of statuses; track s) {
+              <option [value]="s">{{s}}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="wh-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Record ID</th>
+              <th>Name / Title</th>
+              <th>Owner</th>
+              <th>Category</th>
+              <th>District</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of filtered; track r.id) {
+              <tr>
+                <td class="wh-id">{{r.id}}</td>
+                <td>{{r.name}}</td>
+                <td>{{r.owner}}</td>
+                <td>{{r.category}}</td>
+                <td>{{r.district}}</td>
+                <td>{{r.date}}</td>
+                <td><span class="wh-status">{{r.status}}</span></td>
+                <td>
+                  <button class="wh-link" (click)="selected=r">
+                    View Details
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="wh-empty">
+                  No matching records found
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="wh-panel">
+      <div class="wh-table-header">
+        <div>
+          <div class="wh-eyebrow">APPROVED BRD BASELINE</div>
+          <h2>Required Data & Features</h2>
+          <p>Information required for this admin module</p>
+        </div>
+      </div>
+      <div class="wh-grid">
+        @for (field of config.fields; track field) {
+          <div class="wh-field">
+            <span class="wh-dot"></span>
+            {{field}}
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="wh-panel">
+      <h2>Business Rules & Security</h2>
+      <div class="wh-rules">
+        @for (rule of config.rules; track rule) {
+          <div> {{rule}}</div>
+        }
+      </div>
+    </section>
+
+    <div class="wh-end">
+      <span>Frontend demo only. No real API connected.</span>
+      <button (click)="reset()">Reset All Demo Data</button>
+    </div>
+  }
+
+</div>
+
+@if (selected; as r) {
+  <div class="wh-overlay" (click)="selected=null">
+    <div class="wh-modal" (click)="$event.stopPropagation()">
+      <div class="wh-table-header">
+        <div>
+          <div class="wh-eyebrow">RECORD DETAILS</div>
+          <h2>{{r.name}}</h2>
+        </div>
+        <button (click)="selected=null"></button>
+      </div>
+
+      <div class="wh-detail"><span>ID</span><strong>{{r.id}}</strong></div>
+      <div class="wh-detail"><span>Owner</span><strong>{{r.owner}}</strong></div>
+      <div class="wh-detail"><span>Category</span><strong>{{r.category}}</strong></div>
+      <div class="wh-detail"><span>District</span><strong>{{r.district}}</strong></div>
+      <div class="wh-detail"><span>Status</span><strong>{{r.status}}</strong></div>
+      <div class="wh-detail"><span>Date</span><strong>{{r.date}}</strong></div>
+
+      <h3>Information / Evidence</h3>
+      <div class="wh-information">{{r.details}}</div>
+
+      <p class="wh-warning">
+        Demo only: Approval, rewards and voucher operations
+        do not affect a real database or send notifications.
+      </p>
+
+      <div class="wh-actions">
+        @for (a of config.actions; track a) {
+          <button class="wh-primary" (click)="action(r,a)">
+            {{a}}
+          </button>
+        }
+        <button (click)="openEdit(r)">Edit Demo</button>
+        <button (click)="selected=null">Close</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showForm) {
+  <div class="wh-overlay" (click)="showForm=false">
+    <form class="wh-modal" (click)="$event.stopPropagation()"
+      (ngSubmit)="saveRecord()">
+
+      <h2>{{editing ? 'Edit Demo Record' : 'Add Demo Record'}}</h2>
+
+      <label>Name / Title</label>
+      <input name="name" [(ngModel)]="working.name"
+        required maxlength="150" />
+
+      <label>Owner / Contact</label>
+      <input name="owner" [(ngModel)]="working.owner"
+        required maxlength="150" />
+
+      <label>Category</label>
+      <input name="category" [(ngModel)]="working.category"
+        maxlength="100" />
+
+      <label>District</label>
+      <input name="district" [(ngModel)]="working.district"
+        maxlength="100" />
+
+      <label>Status</label>
+      <select name="status" [(ngModel)]="working.status">
+        @for (s of ['Pending','Active','Under Review',
+          'Approved','Rejected','Published','Hidden',
+          'Completed','Reported','Resolved','Paused']; track s) {
+          <option [value]="s">{{s}}</option>
+        }
+      </select>
+
+      <label>Details</label>
+      <textarea name="details"
+        [(ngModel)]="working.details" rows="5"></textarea>
+
+      <div class="wh-actions">
+        <button type="submit" class="wh-primary">
+          Save Demo Record
+        </button>
+        <button type="button" (click)="showForm=false">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+}

@@ -1,0 +1,47 @@
+﻿import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-auth-layout',
+  standalone: true,
+  imports: [RouterOutlet],
+  template: `
+    <main class="wh-nature-auth">
+
+      <!-- Nature Background -->
+      <div class="wh-nature-background"></div>
+
+      <!-- Dark overlay for readability -->
+      <div class="wh-nature-overlay"></div>
+
+      <!-- Original WayHunter Logo -->
+      <header class="wh-nature-header">
+
+        <img
+          src="/images/logo/wayhunter-logo.jpg"
+          alt="WayHunter Original Logo"
+          class="wh-nature-logo"
+        />
+
+        <div class="wh-nature-brand">
+          <strong>WAYHUNTER</strong>
+          <span>ADMIN CONTROL CENTER</span>
+        </div>
+
+      </header>
+
+      <!-- Transparent Login Card -->
+      <section class="wh-nature-content">
+
+        <div class="wh-nature-card">
+
+          <router-outlet></router-outlet>
+
+        </div>
+
+      </section>
+
+    </main>
+  `
+})
+export class AuthLayout {}

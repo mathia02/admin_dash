@@ -1,0 +1,232 @@
+﻿<div class="management-page">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">WAYHUNTER / ADMIN MODULE</p>
+      <h1>{{ config().title }}</h1>
+      <p>{{ config().description }}</p>
+    </div>
+
+    <div class="header-actions">
+      <span class="demo-label">FRONTEND DEMO DATA</span>
+      <button class="secondary" (click)="exportCsv()">
+        Export CSV
+      </button>
+      <button class="primary" (click)="add()">
+        + Add Demo Record
+      </button>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <small>Total Records</small>
+      <strong>{{ rows().length }}</strong>
+      <span>Current browser data</span>
+    </div>
+
+    <div class="summary-card">
+      <small>Filtered Results</small>
+      <strong>{{ filtered().length }}</strong>
+      <span>Search / status filter</span>
+    </div>
+
+    <div class="summary-card">
+      <small>Require Attention</small>
+      <strong>{{ attention() }}</strong>
+      <span>Pending, reported or flagged</span>
+    </div>
+
+    <div class="summary-card">
+      <small>Available Statuses</small>
+      <strong>{{ statuses().length - 1 }}</strong>
+      <span>Demo management workflow</span>
+    </div>
+  </div>
+
+  <section class="workflow">
+    <h3>Module Workflow</h3>
+    <div class="workflow-steps">
+      <span><b>1</b> Review records</span>
+      <span><b>2</b> Inspect details and evidence</span>
+      <span><b>3</b> Manage status</span>
+    </div>
+  </section>
+
+    <section class="brd-coverage">
+    <div class="brd-header">
+      <div>
+        <p class="eyebrow">WAYHUNTER / APPROVED BRD</p>
+        <h2>Module Requirements & Workflow</h2>
+        <p>{{ brd()?.overview }}</p>
+      </div>
+      <span class="brd-tag">BRD REFERENCE</span>
+    </div>
+
+    <div class="brd-grid">
+      @for (section of brd()?.sections ?? []; track section.heading) {
+        <article class="brd-card">
+          <h3>{{ section.heading }}</h3>
+
+          <h4>Required Information</h4>
+          <ul>
+            @for (field of section.fields; track field) {
+              <li>{{ field }}</li>
+            }
+          </ul>
+
+          <h4>Admin Workflow</h4>
+          <ol>
+            @for (step of section.workflow; track step) {
+              <li>{{ step }}</li>
+            }
+          </ol>
+
+          <div class="brd-rules">
+            <h4>Validation & Security</h4>
+            @for (rule of section.rules; track rule) {
+              <p> {{ rule }}</p>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+<section class="records">
+    <div class="records-heading">
+      <div>
+        <h3>{{ config().title }} Records</h3>
+        <p>Manage sample data and view item details.</p>
+      </div>
+
+      <div class="filters">
+        <input
+          type="search"
+          placeholder="Search records..."
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+        />
+
+        <select
+          [ngModel]="status()"
+          (ngModelChange)="status.set($event)"
+        >
+          @for (option of statuses(); track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Record ID</th>
+            <th>Name / Title</th>
+            <th>Owner / Contact</th>
+            <th>Category</th>
+            <th>Updated</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (row of filtered(); track row.id) {
+            <tr>
+              <td class="record-id">{{ row.id }}</td>
+              <td>{{ row.name }}</td>
+              <td>{{ row.owner }}</td>
+              <td>{{ row.type }}</td>
+              <td>{{ row.date }}</td>
+              <td>
+                <span class="status-badge"
+                  [class.green]="['Active','Approved','Published','Resolved','Completed','Ready'].includes(row.status)"
+                  [class.red]="['Rejected','Suspended','Dismissed','Hidden'].includes(row.status)"
+                  [class.orange]="['Pending','Under Review','Warned','Reported'].includes(row.status)"
+                >
+                  {{ row.status }}
+                </span>
+              </td>
+              <td>
+                <button class="text-action" (click)="view(row)">
+                  View Details
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty">
+                No records found. Try another search or filter.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footer-actions">
+    <span>Local demonstration only. No backend connected.</span>
+    <button class="secondary" (click)="resetDemo()">
+      Reset Demo Data
+    </button>
+  </div>
+</div>
+
+@if (selected(); as item) {
+  <div class="modal-backdrop" (click)="close()">
+    <section class="detail-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">WAYHUNTER / RECORD DETAILS</p>
+          <h2>{{ item.name }}</h2>
+        </div>
+        <button class="close" (click)="close()"></button>
+      </div>
+
+      <div class="detail-row">
+        <span>Record ID</span>
+        <strong>{{ item.id }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Owner / Contact</span>
+        <strong>{{ item.owner }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Category</span>
+        <strong>{{ item.type }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Status</span>
+        <strong>{{ item.status }}</strong>
+      </div>
+
+      <div class="detail-row">
+        <span>Updated</span>
+        <strong>{{ item.date }}</strong>
+      </div>
+
+      <h3>Details / Evidence Information</h3>
+      <div class="evidence">{{ item.details }}</div>
+
+      <div class="notice">
+        This is a UI demonstration. Actions do not publish content,
+        credit real rewards, send messages or allocate vouchers.
+      </div>
+
+      <div class="modal-actions">
+        @for (action of config().actions; track action) {
+          <button class="primary" (click)="perform(item, action)">
+            {{ action }}
+          </button>
+        }
+        <button class="secondary" (click)="close()">Close</button>
+      </div>
+    </section>
+  </div>
+}
+

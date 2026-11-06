@@ -1,0 +1,145 @@
+﻿import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-dashboard-page',
+  standalone: true,
+  template: `
+    <div class="dashboard-heading">
+
+      <div>
+        <div class="eyebrow">COMMAND CENTER / OVERVIEW</div>
+        <h1>Dashboard Overview</h1>
+        <p>
+          Welcome to WayHunter Admin.
+          Monitor your platform from one place.
+        </p>
+      </div>
+
+      <div class="dashboard-demo-tag">
+        Sample Dashboard Data
+      </div>
+
+    </div>
+
+    <div class="stats-grid">
+
+      @for (stat of stats; track stat.label) {
+        <div class="stat-card">
+
+          <div class="stat-top">
+            <span>{{ stat.label }}</span>
+            <span class="stat-symbol">{{ stat.symbol }}</span>
+          </div>
+
+          <div class="stat-value">{{ stat.value }}</div>
+
+          <div class="stat-caption">{{ stat.caption }}</div>
+
+        </div>
+      }
+
+    </div>
+
+    <div class="dashboard-lower-grid">
+
+      <section class="dashboard-widget">
+
+        <div class="widget-header">
+          <div>
+            <h3>Platform Activity</h3>
+            <p>Demo activity visualization</p>
+          </div>
+          <span class="widget-tag">OVERVIEW</span>
+        </div>
+
+        <div class="demo-chart">
+          @for (height of chart; track $index) {
+            <div class="chart-column">
+              <div class="chart-bar" [style.height.%]="height"></div>
+            </div>
+          }
+        </div>
+
+        <div class="chart-labels">
+          <span>MON</span>
+          <span>TUE</span>
+          <span>WED</span>
+          <span>THU</span>
+          <span>FRI</span>
+          <span>SAT</span>
+          <span>SUN</span>
+        </div>
+
+      </section>
+
+      <section class="dashboard-widget">
+
+        <div class="widget-header">
+          <div>
+            <h3>Quick Overview</h3>
+            <p>Management modules</p>
+          </div>
+        </div>
+
+        <div class="quick-overview">
+          <div><span>Location Reviews</span><strong>06 Pending</strong></div>
+          <div><span>Game Monitoring</span><strong>18 Active</strong></div>
+          <div><span>Hazard Reports</span><strong>03 Active</strong></div>
+          <div><span>Reward Requests</span><strong>09 Pending</strong></div>
+          <div><span>Merchants</span><strong>12 Listed</strong></div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <div class="dashboard-note">
+      <strong>Frontend Demo:</strong>
+      These values are example data, not real platform statistics.
+      Backend and database integration are not connected.
+    </div>
+  `
+})
+export class DashboardPage {
+
+  stats = [
+    {
+      label: 'Total Users',
+      value: '1,284',
+      caption: 'Registered users',
+      symbol: ''
+    },
+    {
+      label: 'Published Places',
+      value: '326',
+      caption: 'Approved locations',
+      symbol: ''
+    },
+    {
+      label: 'Active Games',
+      value: '18',
+      caption: 'Available challenges',
+      symbol: ''
+    },
+    {
+      label: 'Pending Reviews',
+      value: '06',
+      caption: 'Require attention',
+      symbol: ''
+    },
+    {
+      label: 'Active Hazards',
+      value: '03',
+      caption: 'Safety monitoring',
+      symbol: ''
+    },
+    {
+      label: 'Merchants',
+      value: '12',
+      caption: 'Partner records',
+      symbol: ''
+    }
+  ];
+
+  chart = [36, 52, 43, 74, 58, 88, 68];
+}

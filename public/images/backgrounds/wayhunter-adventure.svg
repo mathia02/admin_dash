@@ -1,0 +1,259 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg"
+     width="1920" height="1080"
+     viewBox="0 0 1920 1080"
+     preserveAspectRatio="xMidYMid slice">
+
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#020b22"/>
+    <stop offset=".26" stop-color="#063c71"/>
+    <stop offset=".53" stop-color="#0c1738"/>
+    <stop offset=".76" stop-color="#622463"/>
+    <stop offset="1" stop-color="#f17c39"/>
+  </linearGradient>
+
+  <radialGradient id="sunGlow">
+    <stop offset="0" stop-color="#fff0a5" stop-opacity=".95"/>
+    <stop offset=".26" stop-color="#ff9f45" stop-opacity=".68"/>
+    <stop offset="1" stop-color="#fd5d83" stop-opacity="0"/>
+  </radialGradient>
+
+  <linearGradient id="mountain" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#9ed6fb"/>
+    <stop offset=".36" stop-color="#1b6b9b"/>
+    <stop offset="1" stop-color="#071633"/>
+  </linearGradient>
+
+  <linearGradient id="orangeMountain" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#ffa15b"/>
+    <stop offset=".45" stop-color="#6e345d"/>
+    <stop offset="1" stop-color="#080f29"/>
+  </linearGradient>
+
+  <linearGradient id="waterfall" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f0ffff"/>
+    <stop offset=".35" stop-color="#43dcff"/>
+    <stop offset="1" stop-color="#0263bb"/>
+  </linearGradient>
+
+  <linearGradient id="river" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#034ea0"/>
+    <stop offset=".35" stop-color="#17ccf3"/>
+    <stop offset=".6" stop-color="#071c49"/>
+    <stop offset="1" stop-color="#f59b49"/>
+  </linearGradient>
+
+  <linearGradient id="centerShade">
+    <stop offset="0" stop-color="#071327" stop-opacity="0"/>
+    <stop offset=".43" stop-color="#06101f" stop-opacity=".35"/>
+    <stop offset=".55" stop-color="#06101f" stop-opacity=".48"/>
+    <stop offset="1" stop-color="#071327" stop-opacity="0"/>
+  </linearGradient>
+
+  <filter id="blueGlow" x="-100%" y="-100%" width="300%" height="300%">
+    <feGaussianBlur stdDeviation="12"/>
+  </filter>
+
+  <filter id="goldGlow" x="-100%" y="-100%" width="300%" height="300%">
+    <feGaussianBlur stdDeviation="11"/>
+  </filter>
+
+  <filter id="softMist">
+    <feGaussianBlur stdDeviation="30"/>
+  </filter>
+</defs>
+
+<!-- SKY -->
+<rect width="1920" height="1080" fill="url(#sky)"/>
+
+<!-- SUNSET -->
+<circle cx="1530" cy="275" r="390" fill="url(#sunGlow)"/>
+<circle cx="1525" cy="283" r="55" fill="#ffedb8" opacity=".89"/>
+
+<!-- STARS -->
+<g fill="#cbeeff" opacity=".7">
+  <circle cx="120" cy="70" r="2"/>
+  <circle cx="350" cy="100" r="1.7"/>
+  <circle cx="570" cy="42" r="2"/>
+  <circle cx="870" cy="76" r="1.6"/>
+  <circle cx="1160" cy="62" r="2"/>
+  <circle cx="1340" cy="112" r="1.5"/>
+  <circle cx="1800" cy="80" r="2"/>
+  <circle cx="1770" cy="405" r="1.5"/>
+  <circle cx="130" cy="420" r="1.5"/>
+  <circle cx="850" cy="280" r="1"/>
+</g>
+
+<!-- DISTANT MOUNTAINS -->
+<path d="M0 575 L140 430 L260 500 L405 310 L550 480 L730 340
+         L880 540 L1060 410 L1230 550 L1450 350 L1610 510
+         L1800 390 L1920 510 L1920 1080 L0 1080 Z"
+      fill="#102346" opacity=".65"/>
+
+<!-- LEFT SNOW PEAK -->
+<path d="M-80 700 L220 155 L435 515 L580 355 L790 755 Z"
+      fill="url(#mountain)"/>
+
+<path d="M145 315 L220 155 L285 288 L247 264 L225 302
+         L203 260 L184 298 Z"
+      fill="#ecfbff"/>
+
+<path d="M517 455 L580 355 L643 468 L600 433 L574 451
+         L554 423 Z"
+      fill="#e3f7ff"/>
+
+<path d="M0 672 L212 395 L160 625 L350 440 L308 720
+         L465 552 L550 855 L0 880 Z"
+      fill="#073654" opacity=".9"/>
+
+<!-- LEFT FOREST -->
+<path d="M0 650 L100 525 L185 660 L265 590 L350 750
+         L490 630 L650 850 L0 1080 Z"
+      fill="#06283c" opacity=".95"/>
+
+<g fill="#061e31">
+  <path d="M55 720 L75 590 L94 720 Z"/>
+  <path d="M130 740 L155 540 L183 740 Z"/>
+  <path d="M210 750 L234 585 L260 750 Z"/>
+  <path d="M315 780 L344 590 L369 780 Z"/>
+  <path d="M420 805 L450 640 L478 805 Z"/>
+  <path d="M500 830 L525 690 L549 830 Z"/>
+</g>
+
+<!-- WATERFALL ROCK -->
+<path d="M0 735 L180 650 L360 680 L525 820
+         L430 1000 L0 1080 Z"
+      fill="#061a31"/>
+
+<!-- WATERFALL -->
+<path d="M120 690 Q200 670 290 700
+         L270 850 Q245 925 190 985
+         L105 1010 Q160 905 142 830 Z"
+      fill="url(#waterfall)" opacity=".9"/>
+
+<g stroke="#d8ffff" stroke-width="6" fill="none" opacity=".85">
+  <path d="M160 696 Q190 820 132 973"/>
+  <path d="M211 698 Q218 840 185 978"/>
+  <path d="M258 709 Q258 846 220 962"/>
+</g>
+
+<!-- LEFT BLUE RIVER -->
+<path d="M0 915 C215 865 300 1005 535 955
+         S830 1040 1040 962 S1320 980 1480 1010
+         L1920 1080 L0 1080 Z"
+      fill="url(#river)" opacity=".88"/>
+
+<path d="M0 948 C260 890 360 1035 590 982
+         S845 1035 1075 995"
+      stroke="#47e4ff" stroke-width="7"
+      fill="none" opacity=".8"/>
+
+<!-- RIGHT ORANGE MOUNTAINS -->
+<path d="M1120 790 L1390 490 L1555 620 L1765 220
+         L1930 505 L1920 1080 L1130 1080 Z"
+      fill="url(#orangeMountain)"/>
+
+<path d="M1600 490 L1765 220 L1840 380 L1788 346
+         L1762 387 L1720 320 Z"
+      fill="#ffd19d" opacity=".88"/>
+
+<path d="M1150 890 L1410 665 L1590 770 L1750 525
+         L1920 690 L1920 1080 L1130 1080 Z"
+      fill="#17162e" opacity=".9"/>
+
+<path d="M1280 1040 L1510 805 L1665 925 L1890 650
+         L1920 1080 Z"
+      fill="#0a132a"/>
+
+<!-- GOLDEN WINDING TREASURE ROAD GLOW -->
+<path d="M1430 900
+         C1500 790 1740 810 1610 690
+         S1815 570 1690 475
+         S1800 355 1765 262"
+      stroke="#ff8d24" stroke-width="32"
+      fill="none" stroke-linecap="round"
+      opacity=".85" filter="url(#goldGlow)"/>
+
+<path d="M1430 900
+         C1500 790 1740 810 1610 690
+         S1815 570 1690 475
+         S1800 355 1765 262"
+      stroke="#ffad39" stroke-width="12"
+      fill="none" stroke-linecap="round"/>
+
+<path d="M1430 900
+         C1500 790 1740 810 1610 690
+         S1815 570 1690 475
+         S1800 355 1765 262"
+      stroke="#fff0a0" stroke-width="4"
+      fill="none" stroke-linecap="round"/>
+
+<!-- RED FLAG -->
+<path d="M1765 270 L1765 188"
+      stroke="#ffc66b" stroke-width="6"/>
+<path d="M1768 190 L1841 203 L1820 223 L1768 216 Z"
+      fill="#ff354b"/>
+
+<!-- BLUE NEON SKY RIBBON -->
+<path d="M-30 355 C220 160 340 200 470 100
+         S710 20 920 -15"
+      stroke="#00bfff" stroke-width="32"
+      fill="none" opacity=".9"
+      filter="url(#blueGlow)"/>
+
+<path d="M-30 355 C220 160 340 200 470 100
+         S710 20 920 -15"
+      stroke="#04bfff" stroke-width="10" fill="none"/>
+
+<path d="M-30 355 C220 160 340 200 470 100
+         S710 20 920 -15"
+      stroke="#c4faff" stroke-width="3" fill="none"/>
+
+<!-- PURPLE ENERGY TRAIL -->
+<path d="M1110 1040 C1400 1000 1530 1020 1710 920
+         S1930 680 1990 600"
+      stroke="#c22cff" stroke-width="26" fill="none"
+      filter="url(#blueGlow)"/>
+
+<path d="M1110 1040 C1400 1000 1530 1020 1710 920
+         S1930 680 1990 600"
+      stroke="#d43bfa" stroke-width="7" fill="none"/>
+
+<!-- BOTTOM BLUE NEON -->
+<path d="M-50 1040 C220 980 420 1110 725 1040
+         S930 1015 1100 1075"
+      stroke="#00d6ff" stroke-width="22" fill="none"
+      filter="url(#blueGlow)"/>
+
+<path d="M-50 1040 C220 980 420 1110 725 1040
+         S930 1015 1100 1075"
+      stroke="#35eaff" stroke-width="5" fill="none"/>
+
+<!-- GOLD LOCATION PIN -->
+<path d="M1765 145 C1730 145 1705 170 1705 207
+         C1705 247 1765 305 1765 305
+         S1825 247 1825 207
+         C1825 170 1800 145 1765 145 Z"
+      fill="#ffad27" opacity=".95"/>
+
+<circle cx="1765" cy="205" r="23" fill="#54204b"/>
+<circle cx="1765" cy="205" r="11" fill="#fff0ac"/>
+
+<!-- SOFT FOG -->
+<g filter="url(#softMist)" opacity=".25" fill="#d3e9ff">
+  <ellipse cx="430" cy="650" rx="340" ry="38"/>
+  <ellipse cx="1070" cy="740" rx="370" ry="44"/>
+  <ellipse cx="1450" cy="865" rx="400" ry="49"/>
+</g>
+
+<!-- CENTER READABILITY -->
+<rect x="460" width="1020" height="1080"
+      fill="url(#centerShade)"/>
+
+<!-- DARK FOREGROUND -->
+<path d="M0 1035 Q300 1010 560 1060
+         T1140 1045 T1920 1030
+         L1920 1080 L0 1080 Z"
+      fill="#041023" opacity=".65"/>
+
+</svg>
